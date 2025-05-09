@@ -20,7 +20,6 @@ import { FormErrors, LoginFormValues } from "@/utils/auth/types"
 import { ZodError } from "zod"
 import { loginSchema } from "@/utils/auth/validation-login"
 import { setToken, signInWithFirebase, signInWithGoogle } from "@/lib/auth"
-import { ErrorText } from "../error-text"
 import { Spinner } from "../ui/spinner"
 import { useRouter } from "next/navigation";
 
@@ -31,20 +30,18 @@ export function SignInForm({
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
-  const [loginErrors, setLoginErrors] = useState<FormErrors>({})
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
 
   const validateLogin = (values: LoginFormValues) => {
     try {
       loginSchema.parse(values)
-      setLoginErrors({})
       return true
     } catch (error) {
       if (error instanceof ZodError) {
-        const errors: FormErrors = error.errors.reduce((acc: FormErrors, err) => {
+        error.errors.reduce((acc: FormErrors, err) => {
           acc[err.path[0] as keyof FormErrors] = err.message
           return acc
         }, {})
-        setLoginErrors(errors)
       }
       return false
     }
@@ -74,7 +71,7 @@ export function SignInForm({
   };
 
   const handleSignInWithGoogle = async () => {
-    setLoading(true);
+    setLoadingGoogle(true);
     try {
       const user = await signInWithGoogle();
       const token = await user.getIdToken();
@@ -84,7 +81,7 @@ export function SignInForm({
       console.error("Erro ao logar com Google:", error);
       toast.error("Erro ao logar com Google. Tente novamente.")
     } finally {
-      setLoading(false);
+      setLoadingGoogle(false);
     }
   };
 
@@ -99,13 +96,15 @@ export function SignInForm({
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col gap-4">
-            <Button variant="outline" className="w-full" onClick={handleSignInWithGoogle}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
+            <Button variant="outline" className="w-full" onClick={handleSignInWithGoogle} disabled={loadingGoogle}>
+              {loadingGoogle ? <Spinner size="small" /> : (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path
                   d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
                   fill="currentColor"
                 />
-              </svg>
+                </svg>
+              )}
               Login com Google
             </Button>
           </div>
@@ -126,7 +125,6 @@ export function SignInForm({
                     placeholder="exemplo@email.com"
                     required
                   />
-                  {loginErrors.email && <ErrorText message={loginErrors.email} />}
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
@@ -139,10 +137,9 @@ export function SignInForm({
                     </Link>
                   </div>
                   <Input id="password" type="password" name="password" required />
-                  {loginErrors.password && <ErrorText message={loginErrors.password} />}
                 </div>
                 <Button type="submit" className="w-full" disabled={loading} >
-                  {loading ? <Spinner size="medium" /> : "Entrar"}
+                  {loading ? <Spinner size="small" /> : "Entrar"}
                 </Button>
               </div>
               <div className="text-center text-sm">
