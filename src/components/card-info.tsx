@@ -12,7 +12,7 @@ export function CardInfo({ value, title, isLoading }: CardInfoProps) {
     <Card>
       <CardContent>
         <p>{title}</p>
-        <p className="text-xl font-semibold">{isLoading ? <Skeleton className="w-full h-7" /> : value}</p>
+        <div className="text-xl font-semibold">{isLoading ? <Skeleton className="w-full h-7" /> : value}</div>
       </CardContent>
     </Card>
   );

@@ -32,3 +32,9 @@ export interface DashboardResponse {
   monthlyTransactionData: MonthlyTransactionData[];
   summary: Summary;
 }
+
+export interface TransactionOptions {
+  states: string[];
+  accounts: string[];
+  industries: string[];
+}

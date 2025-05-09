@@ -9,6 +9,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { useQuery } from "@tanstack/react-query";
 import { fetchDashboardData } from "@/lib/dashboard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TransactionFilterSheet } from "@/components/filter-sheets";
+import { useTransactionFilterStore } from "@/store/useTransactionFilterStore";
 
 export default function Dashboard() {
   const { data, isLoading } = useQuery({
@@ -16,14 +18,23 @@ export default function Dashboard() {
     queryFn: fetchDashboardData,
   });
 
+  const { setAllFilters } = useTransactionFilterStore()
+
+  const handleApplyFilters = (date: Date | undefined, account: string, industry: string, state: string) => {
+    setAllFilters(date, account, industry, state)
+  }
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Dashboard Financeiro</h1>
+      <TransactionFilterSheet
+        handleApplyFilters={handleApplyFilters}
+      />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <CardInfo value={formatAmount((data?.summary?.totalDeposit ?? 0).toString())} title="Receitas" isLoading={isLoading} />
         <CardInfo value={formatAmount((data?.summary?.totalWithdraw ?? 0).toString())} title="Despesas" isLoading={isLoading} />
         <CardInfo value={formatAmount((data?.summary?.totalBalance ?? 0).toString())} title="Saldo Total" isLoading={isLoading} />
-        <CardInfo value={data?.summary?.pendingTransactions.toString() ?? '0'} title="Transações Pendentes" isLoading={isLoading} />  
+        <CardInfo value={data?.summary?.pendingTransactions.toString() ?? '0'} title="Transações Pendentes" isLoading={isLoading} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -33,12 +44,12 @@ export default function Dashboard() {
             {isLoading ? <Skeleton className="w-full h-75" /> : (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={data?.monthlyTransactionComparisonData ?? []}>
-                <XAxis dataKey="month" tickFormatter={(value) => format(new Date(value), 'MM/yyyy')} />
-                <YAxis />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="deposit" stackId="a" fill="var(--color-chart-1)" name="Receitas" />
-                <Bar dataKey="withdraw" stackId="a" fill="var(--color-chart-2)" name="Despesas" />
-              </BarChart>
+                  <XAxis dataKey="month" tickFormatter={(value) => format(new Date(value), 'MM/yyyy')} />
+                  <YAxis />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="deposit" stackId="a" fill="var(--color-chart-1)" name="Receitas" />
+                  <Bar dataKey="withdraw" stackId="a" fill="var(--color-chart-2)" name="Despesas" />
+                </BarChart>
               </ResponsiveContainer>
             )}
             <div className="mt-4 flex gap-4 text-sm text-muted-foreground">
@@ -62,9 +73,9 @@ export default function Dashboard() {
                 <LineChart data={data?.monthlyTransactionData ?? []}>
                   <XAxis dataKey="month" tickFormatter={(value) => format(new Date(value), 'MM/yyyy')} />
                   <YAxis />
-                <Tooltip content={<CustomTooltip />} />
-                <Line type="monotone" dataKey="deposit" stroke="var(--color-chart-1)" name="Receitas" />
-                <Line type="monotone" dataKey="withdraw" stroke="var(--color-chart-2)" name="Despesas" />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Line type="monotone" dataKey="deposit" stroke="var(--color-chart-1)" name="Receitas" />
+                  <Line type="monotone" dataKey="withdraw" stroke="var(--color-chart-2)" name="Despesas" />
                 </LineChart>
               </ResponsiveContainer>
             )}
