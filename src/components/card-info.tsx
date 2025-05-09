@@ -10,7 +10,7 @@ interface CardInfoProps {
 export function CardInfo({ value, title, isLoading }: CardInfoProps) {
   return (
     <Card>
-      <CardContent>
+      <CardContent className="px-4">
         <p>{title}</p>
         <div className="text-xl font-semibold">{isLoading ? <Skeleton className="w-full h-7" /> : value}</div>
       </CardContent>

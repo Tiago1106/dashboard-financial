@@ -65,10 +65,10 @@ export function TransactionFilterSheet({
   return (
     <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline">Filtrar</Button>
+        <Button variant="outline">Filtros</Button>
       </SheetTrigger>
 
-      <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+      <SheetContent side="right" className="w-[300px]">
         <SheetHeader>
           <SheetTitle>Filtrar Transações</SheetTitle>
         </SheetHeader>

@@ -36,11 +36,13 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Dashboard Financeiro</h1>
-      <TransactionFilterSheet
-        handleApplyFilters={handleApplyFilters}
-      />
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Dashboard Financeiro</h1>
+        <TransactionFilterSheet
+          handleApplyFilters={handleApplyFilters}
+        />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <CardInfo value={`R$ ${formatAmount(data?.summary?.totalDeposit?.toString() ?? '0')}`} title="Receitas" isLoading={isLoading} />
         <CardInfo value={`R$ ${formatAmount(data?.summary?.totalWithdraw?.toString() ?? '0')}`} title="Despesas" isLoading={isLoading} />
@@ -50,7 +52,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="p-4 rounded-xl shadow">
-          <CardContent>
+          <CardContent className="px-0">
             <h2 className="text-lg font-semibold mb-4">Comparativo de Receitas e Despesas por Mês</h2>
             {isLoading ? <Skeleton className="w-full h-75" /> : (
               <ResponsiveContainer width="100%" height={300}>
@@ -77,7 +79,7 @@ export default function Dashboard() {
         </Card>
 
         <Card className="p-4 rounded-xl shadow">
-          <CardContent>
+          <CardContent className="px-0">
             <h2 className="text-lg font-semibold mb-4">Evolução de Receitas e Despesas ao Longo do Tempo</h2>
             {isLoading ? <Skeleton className="w-full h-75" /> : (
               <ResponsiveContainer width="100%" height={300}>
