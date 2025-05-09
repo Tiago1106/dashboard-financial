@@ -22,12 +22,14 @@ import { loginSchema } from "@/utils/auth/validation-login"
 import { setToken, signInWithFirebase, signInWithGoogle } from "@/lib/auth"
 import { Spinner } from "../ui/spinner"
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/useUserStore"
 
 export function SignInForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const router = useRouter();
+  const { setUser } = useUserStore();
 
   const [loading, setLoading] = useState(false);
   const [loadingGoogle, setLoadingGoogle] = useState(false);
@@ -57,8 +59,9 @@ export function SignInForm({
     if (await validateLogin({ email, password })) {
       setLoading(true);
       try {
-        const response = await signInWithFirebase(email, password);
-        const token = await response.getIdToken();
+        const user = await signInWithFirebase(email, password);
+        const token = await user.getIdToken();
+        setUser(user);
         await setToken(token);
         router.push("/");
       } catch (error) {
@@ -75,6 +78,7 @@ export function SignInForm({
     try {
       const user = await signInWithGoogle();
       const token = await user.getIdToken();
+      setUser(user);
       await setToken(token);
       router.push("/");
     } catch (error) {
