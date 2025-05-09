@@ -28,7 +28,9 @@ export function TransactionFilterSheet({
   })
 
   const { resetFilters, date, account, industry, state } = useTransactionFilterStore()
+  console.log(date, account, industry, state)
 
+  const [isSheetOpen, setSheetOpen] = useState(false)
   const [data, setData] = useState<{
     date: Date | undefined,
     account: string,
@@ -40,9 +42,6 @@ export function TransactionFilterSheet({
     industry: industry,
     state: state
   })
-
-
-  const [isSheetOpen, setSheetOpen] = useState(false)
 
   const handleCancelClick = () => {
     setSheetOpen(false)
@@ -74,20 +73,18 @@ export function TransactionFilterSheet({
         </SheetHeader>
 
         <div className="w-full px-4 grid gap-4">
-          {/* Data */}
           <div className="grid gap-2">
             <label className="text-sm font-medium">Data</label>
             <DatePicker
-              date={data.date}
+              date={data.date || date}
               onChange={(newDate: Date | undefined) => setData(prevData => ({ ...prevData, date: newDate }))}
             />
           </div>
 
-          {/* Conta */}
           <CustomCombobox
             label="Estado"
             options={options?.states ?? []}
-            value={data.state}
+            value={data.state || state}
             onChange={(newState: string) => setData(prevData => ({ ...prevData, state: newState }))}
             placeholder="Selecione um estado"
           />
@@ -95,7 +92,7 @@ export function TransactionFilterSheet({
           <CustomCombobox
             label="Conta"
             options={options?.accounts ?? []}
-            value={data.account}
+            value={data.account || account}
             onChange={(newAccount: string) => setData(prevData => ({ ...prevData, account: newAccount }))}
             placeholder="Selecione uma conta"
           />
@@ -103,7 +100,7 @@ export function TransactionFilterSheet({
           <CustomCombobox
             label="Indústria"
             options={options?.industries ?? []}
-            value={data.industry}
+            value={data.industry || industry}
             onChange={(newIndustry: string) => setData(prevData => ({ ...prevData, industry: newIndustry }))}
             placeholder="Selecione uma indústria"
           />

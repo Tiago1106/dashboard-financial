@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { createJSONStorage, persist } from "zustand/middleware"
 
 interface TransactionFilterState {
   date: Date | undefined
@@ -30,12 +30,7 @@ export const useTransactionFilterStore = create<TransactionFilterState>()(
     }),
     {
       name: "transaction-filters",
-      partialize: (state) => ({
-        date: state.date,
-        account: state.account,
-        industry: state.industry,
-        state: state.state,
-      }),
+      storage: createJSONStorage(() => sessionStorage)
     }
   )
 )
