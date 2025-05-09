@@ -16,18 +16,13 @@ export default function Transactions() {
     queryFn: () => fetchTransactions(page, limit),
   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Transações</h1>
       </div>
 
-      <TransactionsTable transactions={data?.transactions ?? []} />
-
+      <TransactionsTable transactions={data?.transactions ?? []} isLoading={isLoading} limit={limit} />
 
       <Pagination className="flex items-center justify-between flex-col md:flex-row">
         <PaginationContent>
