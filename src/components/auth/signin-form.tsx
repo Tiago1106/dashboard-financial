@@ -18,7 +18,7 @@ import { useState } from "react"
 import { FormErrors, LoginFormValues } from "@/utils/auth/types"
 
 import { ZodError } from "zod"
-import { loginSchema } from "@/utils/auth/validation-login"
+import { loginSchema } from "@/utils/auth/validations"
 import { setToken, signInWithFirebase, signInWithGoogle } from "@/lib/auth"
 import { Spinner } from "../ui/spinner"
 import { useRouter } from "next/navigation";

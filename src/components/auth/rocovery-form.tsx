@@ -12,21 +12,64 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
+import { recoverPassword } from "@/lib/auth"
+import { useState } from "react"
+import { Spinner } from "../ui/spinner"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { recoverySchema } from "@/utils/auth/validations"
+import { ZodError } from "zod"
+import { FormErrors } from "@/utils/auth/types"
+
 export function RecoveryForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const router = useRouter()
+  const [loading, setLoading] = useState<boolean>(false)
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const validateRecovery = (value: { email: string }) => {
+    console.log("validateRecovery")
+    try {
+      recoverySchema.parse(value)
+      return true
+    } catch (error) {
+      if (error instanceof ZodError) {
+        error.errors.reduce((acc: FormErrors, err) => {
+          acc[err.path[0] as keyof FormErrors] = err.message
+          return acc
+        }, {})
+      }
+      console.log("error", error)
+      return false
+    }
+  }
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
-    const formData = new FormData(event.currentTarget);
+    console.log("handleSubmit")
 
+    const formData = new FormData(event.currentTarget);
     const email = formData.get("email") as string;
 
-    console.log("Email: ", email);
+    console.log("email", email)
+
+    if (await validateRecovery({ email })) {
+      setLoading(true);
+      console.log("validateRecovery")
+      try {
+        await recoverPassword(email);
+        toast.success("Email de recuperação enviado!")
+        router.push("/sign-in")
+      } catch (error) {
+        console.error('Erro ao fazer login:', error);
+        toast.error("Erro ao fazer login. Verifique suas credenciais.")
+      } finally {
+        setLoading(false);
+      }
+    }
   };
-  
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -50,7 +93,8 @@ export function RecoveryForm({
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading && <Spinner size="small" show={loading} />}
                   Enviar link
                 </Button>
               </div>

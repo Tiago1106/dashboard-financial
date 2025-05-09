@@ -17,12 +17,31 @@ import { signUpWithEmail } from "@/lib/auth"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Spinner } from "../ui/spinner"
+import { FormErrors } from "@/utils/auth/types"
+import { SignUpFormValues } from "@/utils/auth/types"
+import { signupSchema } from "@/utils/auth/validations"
+import { ZodError } from "zod"
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  const validateSignUp = (values: SignUpFormValues) => {
+    try {
+      signupSchema.parse(values)
+      return true
+    } catch (error) {
+      if (error instanceof ZodError) {
+        error.errors.reduce((acc: FormErrors, err) => {
+          acc[err.path[0] as keyof FormErrors] = err.message
+          return acc
+        }, {})
+      }
+      return false
+    }
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -33,16 +52,18 @@ export function SignUpForm({
     const name = formData.get("name") as string;
     const password = formData.get("password") as string;
 
-    try {
-      const user = await signUpWithEmail(email, password, name);
-      console.log("Usuário cadastrado:", user);
-      toast.success("Cadastro realizado com sucesso!");
-      router.push("/sign-in");
-    } catch (error) {
-      console.error("Erro no cadastro:", error);
-      toast.error("Erro ao cadastrar. Verifique os dados.");
-    } finally {
-      setLoading(false);
+    if (await validateSignUp({ email, password, name })) {
+      try {
+        const user = await signUpWithEmail(email, password, name);
+        console.log("Usuário cadastrado:", user);
+        toast.success("Cadastro realizado com sucesso!");
+        router.push("/sign-in");
+      } catch (error) {
+        console.error("Erro no cadastro:", error);
+        toast.error("Erro ao cadastrar. Verifique os dados.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 

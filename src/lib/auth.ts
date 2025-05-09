@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth';
+import { GoogleAuthProvider, createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import api from './kyInstance';
 
@@ -58,6 +58,15 @@ export const signUpWithEmail = async (email: string, password: string, name: str
     return user;
   } catch (error) {
     console.error('Erro ao cadastrar usuário:', error);
+    throw new Error(error instanceof Error ? error.message : 'Erro desconhecido');
+  }
+};
+
+export const recoverPassword = async (email: string) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (error) {
+    console.error('Erro ao resetar senha:', error);
     throw new Error(error instanceof Error ? error.message : 'Erro desconhecido');
   }
 };
