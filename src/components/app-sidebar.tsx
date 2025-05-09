@@ -6,6 +6,7 @@ import {
   LayoutDashboardIcon,
   FileTextIcon,
 } from "lucide-react"
+import Link from "next/link"
 
 import { useUserStore } from "@/store/useUserStore"
 
@@ -20,7 +21,6 @@ import {
 } from "@/components/ui/sidebar"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
-
 const data = {
   navMain: [
     {
@@ -47,10 +47,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton
               asChild
             >
-              <a href="">
+              <Link href="/">
                 <FolderMinus className="size-4" />
                 <span className="text-base font-semibold">Dashboard Financeiro</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
