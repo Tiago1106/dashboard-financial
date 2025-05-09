@@ -11,17 +11,28 @@ import { fetchDashboardData } from "@/lib/dashboard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TransactionFilterSheet } from "@/components/filter-sheets";
 import { useTransactionFilterStore } from "@/store/useTransactionFilterStore";
+import { stringify } from "querystring";
 
 export default function Dashboard() {
-  const { data, isLoading } = useQuery({
-    queryKey: ['dashboardData'],
-    queryFn: fetchDashboardData,
-  });
+  const { date, account, industry, state, setAllFilters } = useTransactionFilterStore()
 
-  const { setAllFilters } = useTransactionFilterStore()
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['dashboardData', date, account, industry, state],
+    queryFn: async () => {
+      const filterParams = {
+        date: date?.toISOString() ?? "",
+        account: account ?? "",
+        industry: industry ?? "",
+        state: state ?? "",
+      };
+      const queryString = stringify(filterParams);
+      return fetchDashboardData(queryString);
+    },
+  });
 
   const handleApplyFilters = (date: Date | undefined, account: string, industry: string, state: string) => {
     setAllFilters(date, account, industry, state)
+    refetch()
   }
 
   return (
@@ -31,9 +42,9 @@ export default function Dashboard() {
         handleApplyFilters={handleApplyFilters}
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <CardInfo value={formatAmount((data?.summary?.totalDeposit ?? 0).toString())} title="Receitas" isLoading={isLoading} />
-        <CardInfo value={formatAmount((data?.summary?.totalWithdraw ?? 0).toString())} title="Despesas" isLoading={isLoading} />
-        <CardInfo value={formatAmount((data?.summary?.totalBalance ?? 0).toString())} title="Saldo Total" isLoading={isLoading} />
+        <CardInfo value={`R$ ${formatAmount(data?.summary?.totalDeposit?.toString() ?? '0')}`} title="Receitas" isLoading={isLoading} />
+        <CardInfo value={`R$ ${formatAmount(data?.summary?.totalWithdraw?.toString() ?? '0')}`} title="Despesas" isLoading={isLoading} />
+        <CardInfo value={`R$ ${formatAmount(data?.summary?.totalBalance?.toString() ?? '0')}`} title="Saldo Total" isLoading={isLoading} />
         <CardInfo value={data?.summary?.pendingTransactions.toString() ?? '0'} title="Transações Pendentes" isLoading={isLoading} />
       </div>
 

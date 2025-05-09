@@ -28,7 +28,6 @@ export function TransactionFilterSheet({
   })
 
   const { resetFilters, date, account, industry, state } = useTransactionFilterStore()
-  console.log(date, account, industry, state)
 
   const [isSheetOpen, setSheetOpen] = useState(false)
   const [data, setData] = useState<{
@@ -48,6 +47,7 @@ export function TransactionFilterSheet({
   }
 
   const handleClearClick = () => {
+    setSheetOpen(false)
     resetFilters()
     setData({
       date: undefined,
@@ -58,6 +58,7 @@ export function TransactionFilterSheet({
   }
 
   const handleApplyFiltersClick = () => {
+    setSheetOpen(false)
     handleApplyFilters(data.date, data.account, data.industry, data.state)
   }
 

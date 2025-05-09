@@ -8,14 +8,42 @@ interface GroupedByMonth {
   [key: string]: { deposit: number; withdraw: number };
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
     const filePath = path.join(process.cwd(), 'public/data/transactions.json');
     const fileContent = fs.readFileSync(filePath, 'utf-8');
     const data: Transaction[] = JSON.parse(fileContent);
 
-    const deposits = data.filter(t => t.transaction_type === 'deposit');
-    const withdraws = data.filter(t => t.transaction_type === 'withdraw');
+    // Filtros
+    const dateFilter = searchParams.get('date');
+    const accountFilter = searchParams.get('account');
+    const industryFilter = searchParams.get('industry');
+    const stateFilter = searchParams.get('state');
+
+    // Aplicar Filtros
+    let filteredData = data;
+
+    if (dateFilter) {
+      const filterDate = new Date(dateFilter);
+      filteredData = filteredData.filter(t => new Date(t.date).toDateString() === filterDate.toDateString());
+    }
+
+    if (accountFilter) {
+      filteredData = filteredData.filter(t => t.account === accountFilter);
+    }
+
+    if (industryFilter) {
+      filteredData = filteredData.filter(t => t.industry === industryFilter);
+    }
+
+    if (stateFilter) {
+      filteredData = filteredData.filter(t => t.state === stateFilter);
+    }
+
+    // Categorizar transações
+    const deposits = filteredData.filter(t => t.transaction_type === 'deposit');
+    const withdraws = filteredData.filter(t => t.transaction_type === 'withdraw');
 
     const totalDeposit = deposits.reduce(
       (acc, t) => acc + formatAmountToNumber(t.amount),
@@ -27,12 +55,12 @@ export async function GET() {
     );
     const totalBalance = totalDeposit - totalWithdraw;
 
-    const pendingTransactions = data.filter(t => t.date > Date.now()).length;
+    const pendingTransactions = filteredData.filter(t => t.date > Date.now()).length;
 
     const groupedByMonth: GroupedByMonth = {};
     const lineGroupedByMonth: GroupedByMonth = {};
 
-    data.forEach(t => {
+    filteredData.forEach(t => {
       const date = new Date(t.date);
       const key = `${date.getFullYear()}-${date.getMonth() + 1}`;
 

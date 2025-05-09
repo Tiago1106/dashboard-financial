@@ -38,3 +38,10 @@ export interface TransactionOptions {
   accounts: string[];
   industries: string[];
 }
+
+export interface FetchDashboardDataParams {
+  date?: string;
+  account?: string;
+  industry?: string;
+  state?: string;
+}

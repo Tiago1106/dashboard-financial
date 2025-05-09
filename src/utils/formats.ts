@@ -1,8 +1,7 @@
 export function formatAmount(value: string): string {
-  const number = parseFloat(value) / 100;
+  const number = parseFloat(value);
   return number.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
+    style: 'decimal',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
