@@ -1,5 +1,9 @@
 "use client"
+
+import { useState } from "react"
 import { LogOutIcon, type LucideIcon } from "lucide-react"
+import { useRouter } from "next/navigation"
+
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -8,8 +12,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { signOutFirebase } from "@/lib/auth"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
 import { Spinner } from "./ui/spinner"
 
 export function NavMain({

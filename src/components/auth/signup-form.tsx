@@ -1,6 +1,13 @@
 "use client"
 
+import { useState } from "react"
+import { ZodError } from "zod"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+
 import { cn } from "@/lib/utils"
+import { signUpWithEmail } from "@/lib/auth"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -11,16 +18,13 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import Link from "next/link"
 import { toast } from "sonner"
-import { signUpWithEmail } from "@/lib/auth"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { Spinner } from "../ui/spinner"
+import { Spinner } from "@/components/ui/spinner"
+
 import { FormErrors } from "@/utils/auth/types"
 import { SignUpFormValues } from "@/utils/auth/types"
 import { signupSchema } from "@/utils/auth/validations"
-import { ZodError } from "zod"
+
 export function SignUpForm({
   className,
   ...props

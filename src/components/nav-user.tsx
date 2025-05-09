@@ -1,11 +1,12 @@
 "use client"
 
+import { User } from "firebase/auth"
+
 import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-import { User } from "firebase/auth"
 
 export function NavUser({
   user,

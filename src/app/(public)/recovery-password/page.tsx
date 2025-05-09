@@ -1,4 +1,5 @@
 import { FolderMinus } from "lucide-react"
+
 import { RecoveryForm } from "@/components/auth/rocovery-form"
 
 export default function SignIn() {

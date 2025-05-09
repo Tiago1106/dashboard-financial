@@ -1,6 +1,13 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation";
+import Link from "next/link"
+import { ZodError } from "zod"
+
 import { cn } from "@/lib/utils"
+import { setToken, signInWithFirebase, signInWithGoogle } from "@/lib/auth"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -11,18 +18,12 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import Link from "next/link"
-
+import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
-import { useState } from "react"
-import { FormErrors, LoginFormValues } from "@/utils/auth/types"
 
-import { ZodError } from "zod"
-import { loginSchema } from "@/utils/auth/validations"
-import { setToken, signInWithFirebase, signInWithGoogle } from "@/lib/auth"
-import { Spinner } from "../ui/spinner"
-import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/useUserStore"
+import { FormErrors, LoginFormValues } from "@/utils/auth/types"
+import { loginSchema } from "@/utils/auth/validations"
 
 export function SignInForm({
   className,

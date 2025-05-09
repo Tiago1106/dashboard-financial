@@ -1,4 +1,5 @@
 import { FolderMinus } from "lucide-react"
+
 import { SignUpForm } from "@/components/auth/signup-form"
 
 export default function SignIn() {

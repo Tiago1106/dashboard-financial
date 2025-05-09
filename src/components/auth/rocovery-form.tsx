@@ -1,6 +1,13 @@
 "use client"
 
+import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { ZodError } from "zod"
+
 import { cn } from "@/lib/utils"
+import { recoverPassword } from "@/lib/auth"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -11,14 +18,10 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import Link from "next/link"
-import { recoverPassword } from "@/lib/auth"
-import { useState } from "react"
-import { Spinner } from "../ui/spinner"
-import { useRouter } from "next/navigation"
+import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
+
 import { recoverySchema } from "@/utils/auth/validations"
-import { ZodError } from "zod"
 import { FormErrors } from "@/utils/auth/types"
 
 export function RecoveryForm({

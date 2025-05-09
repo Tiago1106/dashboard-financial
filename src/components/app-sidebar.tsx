@@ -1,9 +1,12 @@
 "use client"
+
 import * as React from "react"
 import {
   FolderMinus,
   LayoutDashboardIcon,
 } from "lucide-react"
+
+import { useUserStore } from "@/store/useUserStore"
 
 import {
   Sidebar,
@@ -16,7 +19,6 @@ import {
 } from "@/components/ui/sidebar"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
-import { useUserStore } from "@/store/useUserStore"
 
 const data = {
   navMain: [

@@ -1,6 +1,8 @@
 "use client"
 
 import * as React from "react"
+import { Check, ChevronDown } from "lucide-react"
+
 import {
   Command,
   CommandEmpty,
@@ -10,7 +12,7 @@ import {
 } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
-import { Check, ChevronDown } from "lucide-react"
+
 import { cn } from "@/lib/utils"
 
 interface ComboboxProps {
@@ -30,6 +32,10 @@ export function CustomCombobox({
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
 
+  const handlePopoverClose = () => {
+    setOpen(false)
+  }
+
   return (
     <div className="grid gap-2">
       <label className="text-sm font-medium">{label}</label>
@@ -40,12 +46,16 @@ export function CustomCombobox({
             role="combobox"
             aria-expanded={open}
             className="w-full justify-between"
+            onClick={() => setOpen(!open)}
           >
             {value || placeholder}
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0 max-h-60 overflow-y-auto">
+        <PopoverContent
+          className="w-full p-0 max-h-60 overflow-y-auto"
+          onClick={handlePopoverClose}
+        >
           <Command>
             <CommandInput placeholder="Buscar..." />
             <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>

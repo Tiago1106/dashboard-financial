@@ -1,5 +1,6 @@
 import { GoogleAuthProvider, createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+
 import api from './kyInstance';
 
 export const signInWithFirebase = async (email: string, password: string) => {
