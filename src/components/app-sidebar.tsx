@@ -4,6 +4,7 @@ import * as React from "react"
 import {
   FolderMinus,
   LayoutDashboardIcon,
+  FileTextIcon,
 } from "lucide-react"
 
 import { useUserStore } from "@/store/useUserStore"
@@ -26,6 +27,11 @@ const data = {
       title: "Dashboard",
       url: "/",
       icon: LayoutDashboardIcon,
+    },
+    {
+      title: "Transações",
+      url: "/transactions",
+      icon: FileTextIcon,
     },
   ],
 }
