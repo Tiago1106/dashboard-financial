@@ -3,89 +3,52 @@
 import { useEffect, useState } from "react";
 import ky from "ky";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
-import { Card, CardContent } from "@/components/ui/card";  // Supondo que você tenha esse componente de Card
-
-interface Transaction {
-  date: number;
-  amount: string;
-  transaction_type: "deposit" | "withdraw";
-  currency: string;
-  account: string;
-  industry: string;
-  state: string;
-}
-
-// Interface para os dados mensais de transações
-interface MonthlyTransactionData {
-  month: string;
-  deposit: number;
-  withdraw: number;
-}
-
-// Interface para os dados de comparação de transações mensais (para gráfico de barras empilhadas)
-interface MonthlyTransactionComparisonData {
-  month: string;
-  deposit: number;
-  withdraw: number;
-}
-
-function formatAmount(value: string): string {
-  const number = parseFloat(value) / 100; // Converte para valor correto de reais
-  return number.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL', // Define a moeda como Real Brasileiro
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-}
-
-function formatAmountToNumber(value: string): number {
-  return parseFloat(value) / 100;  // Converte para o valor real (sem formatação)
-}
+import { Card, CardContent } from "@/components/ui/card";
+import { CardInfo } from "@/components/card-info";
+import { toast } from "sonner";
+import { Transaction, MonthlyTransactionComparisonData, MonthlyTransactionData } from "@/utils/dashboard/types";
+import { formatAmount, formatAmountToNumber } from "@/utils/formats";
+import { CustomTooltip } from "@/components/tooltip-chats";
 
 export default function Dashboard() {
   const [summary, setSummary] = useState({
     totalDeposit: 0,
     totalWithdraw: 0,
     totalBalance: 0,
-    pendingTransactions: 0,  // Para as transações pendentes
+    pendingTransactions: 0,
   });
 
-  const [monthlyTransactionData, setMonthlyTransactionData] = useState<MonthlyTransactionData[]>([]);  // Dados para o gráfico de linhas
-  const [monthlyTransactionComparisonData, setMonthlyTransactionComparisonData] = useState<MonthlyTransactionComparisonData[]>([]);  // Dados para o gráfico de barras empilhadas
+  const [monthlyTransactionData, setMonthlyTransactionData] = useState<MonthlyTransactionData[]>([]);
+  const [monthlyTransactionComparisonData, setMonthlyTransactionComparisonData] = useState<MonthlyTransactionComparisonData[]>([]);
 
   useEffect(() => {
     async function load() {
       try {
         const data = await ky.get("/data/transactions.json").json<Transaction[]>();
-        
-        // Filtrando as transações de depósito e saque
+
         const deposits = data.filter(t => t.transaction_type === "deposit");
         const withdraws = data.filter(t => t.transaction_type === "withdraw");
 
-        // Calculando as receitas, despesas e saldo total
         const totalDeposit = deposits.reduce((acc: number, t: Transaction) => acc + formatAmountToNumber(t.amount), 0);
         const totalWithdraw = withdraws.reduce((acc: number, t: Transaction) => acc + formatAmountToNumber(t.amount), 0);
         const totalBalance = totalDeposit - totalWithdraw;
 
-        // Definindo as transações pendentes como aquelas com data futura
         const pendingTransactions = data.filter(t => t.date > Date.now()).length;
 
         setSummary({
           totalDeposit,
           totalWithdraw,
           totalBalance,
-          pendingTransactions,  // Atualizando o número de transações pendentes
+          pendingTransactions,
         });
 
-        // Processando os dados para os gráficos
         const groupedByMonth: { [key: string]: { deposit: number; withdraw: number } } = {};
         const lineGroupedByMonth: { [key: string]: { deposit: number; withdraw: number } } = {};
 
         data.forEach(t => {
           const date = new Date(t.date);
           const key = `${date.getFullYear()}-${date.getMonth() + 1}`;
-          
+
           if (!groupedByMonth[key]) groupedByMonth[key] = { deposit: 0, withdraw: 0 };
           groupedByMonth[key][t.transaction_type] += formatAmountToNumber(t.amount);
 
@@ -93,7 +56,6 @@ export default function Dashboard() {
           lineGroupedByMonth[key][t.transaction_type] += formatAmountToNumber(t.amount);
         });
 
-        // Convertendo para os dados para os gráficos
         const monthlyTransactionComparisonData = Object.entries(groupedByMonth).map(([month, data]) => ({
           month,
           deposit: data.deposit,
@@ -111,6 +73,7 @@ export default function Dashboard() {
 
       } catch (err) {
         console.error("Erro ao carregar dados:", err);
+        toast.error("Erro ao carregar dados");
       }
     }
 
@@ -121,35 +84,13 @@ export default function Dashboard() {
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold">Dashboard Financeiro</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent>
-            <p>Receitas</p>
-            <p className="text-xl font-semibold">{formatAmount(summary.totalDeposit.toString())}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p>Despesas</p>
-            <p className="text-xl font-semibold">{formatAmount(summary.totalWithdraw.toString())}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p>Saldo Total</p>
-            <p className="text-xl font-semibold">{formatAmount(summary.totalBalance.toString())}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p>Transações Pendentes</p>
-            <p className="text-xl font-semibold">{summary.pendingTransactions}</p>
-          </CardContent>
-        </Card>
+        <CardInfo value={formatAmount(summary.totalDeposit.toString())} title="Receitas" />
+        <CardInfo value={formatAmount(summary.totalWithdraw.toString())} title="Despesas" />
+        <CardInfo value={formatAmount(summary.totalBalance.toString())} title="Saldo Total" />
+        <CardInfo value={summary.pendingTransactions.toString()} title="Transações Pendentes" />
       </div>
 
-      {/* Gráficos */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Gráfico de Barras Empilhadas */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="p-4 rounded-xl shadow">
           <CardContent>
             <h2 className="text-lg font-semibold mb-4">Comparativo de Receitas e Despesas por Mês</h2>
@@ -157,15 +98,24 @@ export default function Dashboard() {
               <BarChart data={monthlyTransactionComparisonData}>
                 <XAxis dataKey="month" />
                 <YAxis />
-                <Tooltip />
-                <Bar dataKey="deposit" stackId="a" fill="#4ade80" name="Receitas" />
-                <Bar dataKey="withdraw" stackId="a" fill="#f87171" name="Despesas" />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="deposit" stackId="a" fill="var(--color-chart-1)" name="Receitas" />
+                <Bar dataKey="withdraw" stackId="a" fill="var(--color-chart-2)" name="Despesas" />
               </BarChart>
             </ResponsiveContainer>
+            <div className="mt-4 flex gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded bg-chart-1" />
+                <span>Receitas</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded bg-chart-2" />
+                <span>Despesas</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Gráfico de Linhas */}
         <Card className="p-4 rounded-xl shadow">
           <CardContent>
             <h2 className="text-lg font-semibold mb-4">Evolução de Receitas e Despesas ao Longo do Tempo</h2>
@@ -173,11 +123,21 @@ export default function Dashboard() {
               <LineChart data={monthlyTransactionData}>
                 <XAxis dataKey="month" />
                 <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="deposit" stroke="#4ade80" name="Receitas" />
-                <Line type="monotone" dataKey="withdraw" stroke="#f87171" name="Despesas" />
+                <Tooltip content={<CustomTooltip />} />
+                <Line type="monotone" dataKey="deposit" stroke="var(--color-chart-1)" name="Receitas" />
+                <Line type="monotone" dataKey="withdraw" stroke="var(--color-chart-2)" name="Despesas" />
               </LineChart>
             </ResponsiveContainer>
+            <div className="mt-4 flex gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-0.5 rounded-sm" style={{ backgroundColor: 'var(--color-chart-1)' }} />
+                <span>Receitas</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-0.5 rounded-sm" style={{ backgroundColor: 'var(--color-chart-2)' }} />
+                <span>Despesas</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
