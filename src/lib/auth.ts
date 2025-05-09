@@ -35,6 +35,7 @@ export async function setToken(token: string) {
 export const signOutFirebase = async () => {
   try {
     await signOut(auth);
+    await removeToken();
   } catch (error) {
     console.error('Error logging out:', error);
     throw new Error(error instanceof Error ? error.message : 'Erro desconhecido');

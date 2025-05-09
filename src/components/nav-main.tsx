@@ -7,6 +7,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { signOutFirebase } from "@/lib/auth"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { Spinner } from "./ui/spinner"
+
 export function NavMain({
   items,
 }: {
@@ -16,6 +21,16 @@ export function NavMain({
     icon?: LucideIcon
   }[]
 }) {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+
+  const signOut = async () => {
+    setLoading(true)
+    await signOutFirebase()
+    router.push("/sign-in")
+    setLoading(false)
+  }
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -29,8 +44,8 @@ export function NavMain({
             </SidebarMenuItem>
           ))}
           <SidebarMenuItem key="sair">
-              <SidebarMenuButton tooltip="Sair">
-                <LogOutIcon />
+              <SidebarMenuButton tooltip="Sair" onClick={() => signOut()}>
+                {loading ? <Spinner size='small' show={loading} /> : <LogOutIcon />}
                 <span>Sair</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
