@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SiteHeader } from "@/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function PrivateLayout({
   children,
@@ -8,8 +9,13 @@ export default function PrivateLayout({
 }) {
   return (
     <SidebarProvider>
-      <AppSidebar />
-      {children}
+      <AppSidebar variant="inset" />
+      <SidebarInset>
+        <SiteHeader />
+        <div className="flex-1 p-4">
+          {children}
+        </div>
+      </SidebarInset>
     </SidebarProvider>
   );
 }
