@@ -68,7 +68,7 @@ export function TransactionFilterSheet({
         <Button variant="outline">Filtros</Button>
       </SheetTrigger>
 
-      <SheetContent side="right" className="w-[300px]">
+      <SheetContent side="right" className="w-full min-w-[300px]">
         <SheetHeader>
           <SheetTitle>Filtrar Transações</SheetTitle>
         </SheetHeader>
