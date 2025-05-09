@@ -32,7 +32,6 @@ export function RecoveryForm({
   const [loading, setLoading] = useState<boolean>(false)
 
   const validateRecovery = (value: { email: string }) => {
-    console.log("validateRecovery")
     try {
       recoverySchema.parse(value)
       return true
@@ -43,23 +42,18 @@ export function RecoveryForm({
           return acc
         }, {})
       }
-      console.log("error", error)
       return false
     }
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("handleSubmit")
 
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email") as string;
 
-    console.log("email", email)
-
     if (await validateRecovery({ email })) {
       setLoading(true);
-      console.log("validateRecovery")
       try {
         await recoverPassword(email);
         toast.success("Email de recuperação enviado!")

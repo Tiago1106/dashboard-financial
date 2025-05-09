@@ -58,8 +58,7 @@ export function SignUpForm({
 
     if (await validateSignUp({ email, password, name })) {
       try {
-        const user = await signUpWithEmail(email, password, name);
-        console.log("Usuário cadastrado:", user);
+        await signUpWithEmail(email, password, name);
         toast.success("Cadastro realizado com sucesso!");
         router.push("/sign-in");
       } catch (error) {

@@ -45,3 +45,10 @@ export interface FetchDashboardDataParams {
   industry?: string;
   state?: string;
 }
+
+export interface TransactionResponse {
+  transactions: Transaction[];
+  total: number;
+  totalPages: number;
+  currentPage: number;
+}

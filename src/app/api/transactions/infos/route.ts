@@ -16,13 +16,11 @@ export async function GET(request: Request) {
     const fileContent = fs.readFileSync(filePath, 'utf-8');
     const data: Transaction[] = JSON.parse(fileContent);
 
-    // Filtros
     const dateFilter = searchParams.get('date');
     const accountFilter = searchParams.get('account');
     const industryFilter = searchParams.get('industry');
     const stateFilter = searchParams.get('state');
 
-    // Aplicar Filtros
     let filteredData = data;
 
     if (dateFilter) {
@@ -42,7 +40,6 @@ export async function GET(request: Request) {
       filteredData = filteredData.filter(t => t.state === stateFilter);
     }
 
-    // Categorizar transações
     const deposits = filteredData.filter(t => t.transaction_type === 'deposit');
     const withdraws = filteredData.filter(t => t.transaction_type === 'withdraw');
 
