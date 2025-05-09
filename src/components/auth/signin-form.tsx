@@ -19,13 +19,17 @@ import { FormErrors, LoginFormValues } from "@/utils/auth/types"
 
 import { ZodError } from "zod"
 import { loginSchema } from "@/utils/auth/validation-login"
-import { signInWithFirebase, signInWithGoogle } from "@/lib/auth"
+import { setToken, signInWithFirebase, signInWithGoogle } from "@/lib/auth"
 import { ErrorText } from "../error-text"
 import { Spinner } from "../ui/spinner"
+import { useRouter } from "next/navigation";
+
 export function SignInForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const router = useRouter();
+
   const [loading, setLoading] = useState(false);
   const [loginErrors, setLoginErrors] = useState<FormErrors>({})
 
@@ -57,9 +61,9 @@ export function SignInForm({
       setLoading(true);
       try {
         const response = await signInWithFirebase(email, password);
-        console.log("Usuário logado com Firebase:", response);
-        // setar token
-        // router
+        const token = await response.getIdToken();
+        await setToken(token);
+        router.push("/");
       } catch (error) {
         console.error('Erro ao fazer login:', error);
         toast.error("Erro ao fazer login. Verifique suas credenciais.")
@@ -73,8 +77,9 @@ export function SignInForm({
     setLoading(true);
     try {
       const user = await signInWithGoogle();
-      console.log("Usuário logado com Google:", user);
-      // router.push("/dashboard");
+      const token = await user.getIdToken();
+      await setToken(token);
+      router.push("/");
     } catch (error) {
       console.error("Erro ao logar com Google:", error);
       toast.error("Erro ao logar com Google. Tente novamente.")

@@ -1,5 +1,6 @@
 import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import api from './kyInstance';
 
 export const signInWithFirebase = async (email: string, password: string) => {
   try {
@@ -10,6 +11,7 @@ export const signInWithFirebase = async (email: string, password: string) => {
     throw new Error(error instanceof Error ? error.message : 'Erro desconhecido');
   }
 };
+
 
 export const signInWithGoogle = async () => {
   try {
@@ -22,6 +24,14 @@ export const signInWithGoogle = async () => {
   }
 };
 
+export async function setToken(token: string) {
+  const response = await api.post('auth/set-token', {
+    json: { token },
+  }).json();
+
+  return response;
+}
+
 export const signOutFirebase = async () => {
   try {
     await signOut(auth);
@@ -30,3 +40,9 @@ export const signOutFirebase = async () => {
     throw new Error(error instanceof Error ? error.message : 'Erro desconhecido');
   }
 };
+
+export async function removeToken() {
+  const response = await api.post('auth/remove-token').json();
+
+  return response;
+}
