@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
+import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import api from './kyInstance';
 
@@ -46,3 +46,18 @@ export async function removeToken() {
 
   return response;
 }
+
+
+export const signUpWithEmail = async (email: string, password: string, name: string) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    await updateProfile(user, { displayName: name });
+
+    return user;
+  } catch (error) {
+    console.error('Erro ao cadastrar usuário:', error);
+    throw new Error(error instanceof Error ? error.message : 'Erro desconhecido');
+  }
+};

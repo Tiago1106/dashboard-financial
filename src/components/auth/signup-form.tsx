@@ -12,25 +12,40 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
+import { toast } from "sonner"
+import { signUpWithEmail } from "@/lib/auth"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { Spinner } from "../ui/spinner"
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    
-    const formData = new FormData(event.currentTarget);
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+
+    const formData = new FormData(event.currentTarget);
     const email = formData.get("email") as string;
     const name = formData.get("name") as string;
     const password = formData.get("password") as string;
 
-    console.log("Email: ", email);
-    console.log("Name: ", name);
-    console.log("Password: ", password);
+    try {
+      const user = await signUpWithEmail(email, password, name);
+      console.log("Usuário cadastrado:", user);
+      toast.success("Cadastro realizado com sucesso!");
+      router.push("/sign-in");
+    } catch (error) {
+      console.error("Erro no cadastro:", error);
+      toast.error("Erro ao cadastrar. Verifique os dados.");
+    } finally {
+      setLoading(false);
+    }
   };
-  
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -67,7 +82,8 @@ export function SignUpForm({
                   <Label htmlFor="password">Senha</Label>
                   <Input id="password" type="password" name="password" required />
                 </div>
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading && <Spinner show={loading} size="small" />}
                   Criar conta
                 </Button>
               </div>
