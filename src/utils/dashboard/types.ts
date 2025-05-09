@@ -8,6 +8,13 @@ export interface Transaction {
   state: string;
 }
 
+export interface Summary {
+  totalDeposit: number;
+  totalWithdraw: number;
+  totalBalance: number;
+  pendingTransactions: number;
+}
+
 export interface MonthlyTransactionData {
   month: string;
   deposit: number;
@@ -18,4 +25,10 @@ export interface MonthlyTransactionComparisonData {
   month: string;
   deposit: number;
   withdraw: number;
+}
+
+export interface DashboardResponse {
+  monthlyTransactionComparisonData: MonthlyTransactionComparisonData[];
+  monthlyTransactionData: MonthlyTransactionData[];
+  summary: Summary;
 }
