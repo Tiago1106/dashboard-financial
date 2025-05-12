@@ -1,45 +1,25 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { VariantProps, cva } from 'class-variance-authority';
-import { Loader2 } from 'lucide-react';
+import { Loader } from "lucide-react";
+import classNames from "classnames";
 
-const spinnerVariants = cva('flex-col items-center justify-center', {
-  variants: {
-    show: {
-      true: 'flex',
-      false: 'hidden',
-    },
-  },
-  defaultVariants: {
-    show: true,
-  },
-});
+type SpinnerProps = {
+  size?: "sm" | "md" | "lg";
+  show?: boolean;
+};
 
-const loaderVariants = cva('animate-spin text-primary', {
-  variants: {
-    size: {
-      small: 'size-6',
-      medium: 'size-8',
-      large: 'size-12',
-    },
-  },
-  defaultVariants: {
-    size: 'medium',
-  },
-});
+const sizeMap = {
+  sm: 16,
+  md: 24,
+  lg: 32,
+};
 
-interface SpinnerContentProps
-  extends VariantProps<typeof spinnerVariants>,
-    VariantProps<typeof loaderVariants> {
-  className?: string;
-  children?: React.ReactNode;
-}
+export const Spinner: React.FC<SpinnerProps> = ({ size = "md", show = false }) => {
+  if (!show) return null;
 
-export function Spinner({ size, show, children, className }: SpinnerContentProps) {
   return (
-    <span className={spinnerVariants({ show })}>
-      <Loader2 className={cn(loaderVariants({ size }), className)} />
-      {children}
-    </span>
+    <Loader
+      className={classNames("animate-spin text-gray-500")}
+      size={sizeMap[size]}
+      strokeWidth={2.5}
+    />
   );
-}
+};

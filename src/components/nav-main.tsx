@@ -49,7 +49,7 @@ export function NavMain({
           ))}
           <SidebarMenuItem key="sair">
               <SidebarMenuButton tooltip="Sair" onClick={() => signOut()}>
-                {loading ? <Spinner size='small' show={loading} /> : <LogOutIcon />}
+                {loading ? <Spinner size='md' show={loading} /> : <LogOutIcon />}
                 <span>Sair</span>
               </SidebarMenuButton>
             </SidebarMenuItem>

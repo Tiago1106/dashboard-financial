@@ -89,7 +89,7 @@ export function SignUpForm({
                   <Input id="password" type="password" name="password" required />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading && <Spinner show={loading} size="small" />}
+                  {loading && <Spinner show={loading} size="md" />}
                   Criar conta
                 </Button>
               </div>

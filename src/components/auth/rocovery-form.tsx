@@ -73,7 +73,7 @@ export function RecoveryForm({
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading && <Spinner size="small" show={loading} />}
+                  {loading && <Spinner size="md" show={loading} />}
                   Enviar link
                 </Button>
               </div>
