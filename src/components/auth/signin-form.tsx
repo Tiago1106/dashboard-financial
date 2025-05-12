@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation";
 import Link from "next/link"
-import { ZodError } from "zod"
 
 import { cn } from "@/lib/utils"
 import { setToken, signInWithFirebase, signInWithGoogle } from "@/lib/auth"
@@ -22,8 +21,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
 
 import { useUserStore } from "@/store/useUserStore"
-import { FormErrors, LoginFormValues } from "@/utils/auth/types"
-import { loginSchema } from "@/utils/auth/validations"
+import { validateLogin } from "@/utils/auth/validateLogin";
 
 export function SignInForm({
   className,
@@ -34,21 +32,6 @@ export function SignInForm({
 
   const [loading, setLoading] = useState(false);
   const [loadingGoogle, setLoadingGoogle] = useState(false);
-
-  const validateLogin = (values: LoginFormValues) => {
-    try {
-      loginSchema.parse(values)
-      return true
-    } catch (error) {
-      if (error instanceof ZodError) {
-        error.errors.reduce((acc: FormErrors, err) => {
-          acc[err.path[0] as keyof FormErrors] = err.message
-          return acc
-        }, {})
-      }
-      return false
-    }
-  }
 
   const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

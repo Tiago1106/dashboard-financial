@@ -1,4 +1,4 @@
-import { loginSchema, recoverySchema, signupSchema } from "./validations";
+import { loginSchema, recoverySchema, signupSchema } from "../validations";
 
 describe("loginSchema", () => {
   it("valida com sucesso dados corretos", () => {

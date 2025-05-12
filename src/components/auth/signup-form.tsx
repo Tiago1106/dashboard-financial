@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { ZodError } from "zod"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
@@ -21,9 +20,7 @@ import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import { Spinner } from "@/components/ui/spinner"
 
-import { FormErrors } from "@/utils/auth/types"
-import { SignUpFormValues } from "@/utils/auth/types"
-import { signupSchema } from "@/utils/auth/validations"
+import { validateSignUp } from "@/utils/auth/validateSignUp"
 
 export function SignUpForm({
   className,
@@ -31,21 +28,6 @@ export function SignUpForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-
-  const validateSignUp = (values: SignUpFormValues) => {
-    try {
-      signupSchema.parse(values)
-      return true
-    } catch (error) {
-      if (error instanceof ZodError) {
-        error.errors.reduce((acc: FormErrors, err) => {
-          acc[err.path[0] as keyof FormErrors] = err.message
-          return acc
-        }, {})
-      }
-      return false
-    }
-  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
