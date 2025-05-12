@@ -14,7 +14,7 @@ Você pode acessar o projeto em produção através do link abaixo:
 
 ## 📸 Screenshot
 
-![Screenshot](.public/capture.png)
+![Screenshot](./public/capture.png)
 
 ## ✅ Requisitos
 
