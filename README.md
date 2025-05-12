@@ -10,9 +10,11 @@ O sistema é projetado para ser ágil, escalável e fácil de usar, com funciona
 
 Você pode acessar o projeto em produção através do link abaixo:
 
-🔗 [Dashboard - Financeiro]()
+🔗 [Dashboard - Financeiro](https://dashboard-financial-sigma.vercel.app)
 
 ## 📸 Screenshot
+
+![Screenshot](capture.png)
 
 ## ✅ Requisitos
 
@@ -92,6 +94,7 @@ Por esses motivos, optamos por utilizar Tailwind CSS, aliado ao shadcn/ui, que o
 - [Zustand](https://zustand-demo.pmnd.rs/) (para gerenciamento de filtros e sessão)
 - [Date FNS](https://date-fns.org/)
 - [Firebase](https://console.firebase.google.com) (para autenticação)
+- [Jest](https://jestjs.io/) (para testes automatizados)
 
 ## Pré-requisitos
 
